@@ -19,7 +19,7 @@ def get_files_info(working_directory: str, directory: str = ".") -> str:
                 directory = f"'{directory}'"
             items: list[str] = []
             for item in os.listdir(target_dir):
-                items.append(f"  - {item}: file_size={os.path.getsize(target_dir + "/" + item)} bytes, is_dir={os.path.isdir(target_dir + "/" + item)}")
+                items.append(f"  - {item}: file_size={os.path.getsize(os.path.join(target_dir, item))} bytes, is_dir={os.path.isdir(os.path.join(target_dir, item))}")
                 message = "\n".join(items[::-1])
         return f'{header}\n{message}'
     except Exception as e:
