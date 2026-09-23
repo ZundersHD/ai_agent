@@ -6,7 +6,7 @@ schema_write_file: ChatCompletionToolParam = {
     "type": "function",
     "function": {
         "name": "write_file",
-        "description": "Overwriting and replacing a files content relative to the working directory, also check if the target is not a directory",
+        "description": "Overwriting and replacing a files content relative to the working directory, also check if the target is not a directory. Creates the file if if doesen't exist",
         "parameters": {
             "type": "object",
             "properties": {

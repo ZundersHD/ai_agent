@@ -5,7 +5,7 @@ from openai import OpenAI
 import argparse
 
 from prompts import system_prompt
-from call_function import available_functions
+from call_function import available_functions, call_function
 
 
 def api_call(api_key: str, messages: list):
@@ -52,12 +52,16 @@ def main():
         print(f"Prompt tokens: {tokens_promt}")
         print(f"Response tokens: {tokens_response}")
 
-    print(message.content)
-
     if message.tool_calls is not None:
         for tool_call in message.tool_calls:
-            function_args = json.loads(tool_call.function.arguments or "{}") # pyright: ignore[reportAttributeAccessIssue]
-            print(f"Calling function: {tool_call.function.name}({function_args})") # pyright: ignore[reportAttributeAccessIssue]
+            result_message = call_function(tool_call, args.verbose)
+            if result_message['content'] == None:
+                raise Exception("empty toolcall.content")
+            if args.verbose:
+                print(f"-> {result_message['content']}")
+
+    if message.content != None:
+        print(message.content)
 
 if __name__ == "__main__":
     main()
