@@ -1,5 +1,28 @@
 import os
+from openai.types.chat import ChatCompletionToolParam
 
+
+schema_write_file: ChatCompletionToolParam = {
+    "type": "function",
+    "function": {
+        "name": "write_file",
+        "description": "Overwriting and replacing a files content relative to the working directory, also check if the target is not a directory",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "Filepath to a file, relative to the working directory",
+                },
+                "content": {
+                    "type": "string",
+                    "description": "Content to be written",
+                },
+            },
+            "required": ["file_path", "content"]
+        },
+    },
+}
 
 def write_file(working_directory: str, file_path: str, content: str) -> str:
     try:

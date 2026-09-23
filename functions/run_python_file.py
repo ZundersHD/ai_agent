@@ -1,6 +1,30 @@
 import os
+from openai.types.chat import ChatCompletionToolParam
 import subprocess
 
+
+schema_run_python_file: ChatCompletionToolParam = {
+    "type": "function",
+    "function": {
+        "name": "run_python_file",
+        "description": "Executes a Python file relative to the working directory with optional list of arguments to append, also checks if the file exists and if it is a python file",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "Filepath to the Python file execute via run, relative to the working directory",
+                },
+                "args": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Optional arguments to append to the run command",
+                },
+            },
+            "required": ["file_path"]
+        },
+    },
+}
 
 def run_python_file(
     working_directory: str, file_path: str, args: list[str] | None = None

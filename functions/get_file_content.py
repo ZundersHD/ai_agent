@@ -1,7 +1,26 @@
 import os
+from openai.types.chat import ChatCompletionToolParam
 
 from config import MAX_CHARS
 
+
+schema_get_file_content: ChatCompletionToolParam = {
+    "type": "function",
+    "function": {
+        "name": "get_file_content",
+        "description": f"Read the content of a specified file relative to the working directory, also check if the file exists",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "Filepath of a file to read the contents of, relative to the working directory",
+                },
+            },
+            "required": ["file_path"]
+        },
+    },
+}
 
 def get_file_content(working_directory: str, file_path: str) -> str:
     try:
