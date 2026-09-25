@@ -37,31 +37,40 @@ def main():
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": args.user_prompt},
     ]
-    response = api_call(api_key, messages)
-    message = response.choices[0].message
 
-    if response.usage == None:
-        tokens_promt: int | None = None
-        tokens_response: int | None = None
-    else:
-        tokens_promt = response.usage.prompt_tokens
-        tokens_response = response.usage.completion_tokens
+    for _ in range(20):
+        response = api_call(api_key, messages)
+        message = response.choices[0].message
+        messages.append(message)
 
-    if args.verbose:
-        print(f"User prompt: {args.user_prompt}")
-        print(f"Prompt tokens: {tokens_promt}")
-        print(f"Response tokens: {tokens_response}")
+        if args.verbose:
+            if response.usage == None:
+                tokens_promt: int | None = None
+                tokens_response: int | None = None
+            else:
+                tokens_promt = response.usage.prompt_tokens
+                tokens_response = response.usage.completion_tokens
 
-    if message.tool_calls is not None:
-        for tool_call in message.tool_calls:
-            result_message = call_function(tool_call, args.verbose)
-            if result_message['content'] == None:
-                raise Exception("empty toolcall.content")
-            if args.verbose:
-                print(f"-> {result_message['content']}")
+            print(f"User prompt: {args.user_prompt}")
+            print(f"Prompt tokens: {tokens_promt}")
+            print(f"Response tokens: {tokens_response}")
 
-    if message.content != None:
-        print(message.content)
+        if message.content != None:
+            print(message.content)
+
+        if message.tool_calls != None:
+            for tool_call in message.tool_calls:
+                result_message = call_function(tool_call, args.verbose)
+                messages.append(result_message)
+                if result_message['content'] == None:
+                    raise Exception("empty toolcall.content")
+                if args.verbose:
+                    print(f"-> {result_message['content']}")
+        else:
+            print(message.content)
+            return
+    print("Max Iterations 20 reached")
+    exit(1)
 
 if __name__ == "__main__":
     main()
